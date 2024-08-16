@@ -23,6 +23,7 @@ class _ExtendedNestedScrollViewDemoState
     extends State<ExtendedNestedScrollViewDemo> with TickerProviderStateMixin {
   late final TabController primaryTC;
   late final TabController secondaryTC;
+  ScrollController scrollController = ScrollController(debugLabel: 'custom');
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _ExtendedNestedScrollViewDemoState
   void dispose() {
     primaryTC.dispose();
     secondaryTC.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -46,13 +48,14 @@ class _ExtendedNestedScrollViewDemoState
   Widget _buildScaffoldBody() {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double pinnedHeaderHeight =
-        //statusBar height
-        statusBarHeight +
-            //pinned SliverAppBar height in header
-            kToolbarHeight;
+    //statusBar height
+    statusBarHeight +
+        //pinned SliverAppBar height in header
+        kToolbarHeight;
     return ExtendedNestedScrollView(
+      controller: scrollController,
       headerSliverBuilder: (BuildContext c, bool f) {
-        return buildSliverHeader();
+        return buildSliverHeader().take(2).toList();
       },
       //1.[pinned sliver header issue](https://github.com/flutter/flutter/issues/22393)
       pinnedHeaderSliverHeightBuilder: () {
@@ -81,20 +84,24 @@ class _ExtendedNestedScrollViewDemoState
                 GlowNotificationWidget(
                   ExtendedVisibilityDetector(
                     uniqueKey: const Key('Tab1'),
-                    child: ListView.builder(
-                      //store Page state
-                      key: const PageStorageKey<String>('Tab1'),
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: 50,
-                      itemBuilder: (BuildContext c, int i) {
-                        return Container(
-                          alignment: Alignment.center,
-                          height: 60.0,
-                          child: Text(
-                            const Key('Tab1').toString() + ': ListView$i',
-                          ),
-                        );
-                      },
+                    child: ExtendedNestedScrollView(
+                        onlyOneScrollInBody: true,
+                        headerSliverBuilder: (ctx,inner){
+                         var list = buildSliverHeader();
+                         return [list[1],list[3]];
+                        },
+                        body: ListView.builder(
+                            primary: true,
+                            physics: const ClampingScrollPhysics(),
+                            padding: EdgeInsets.zero,
+                            itemCount: 100,
+                            itemExtent: 100,
+                            itemBuilder:(ctx,index)=> Container(
+                              height: 100,
+                              color: index % 2 == 0 ? Colors.red : Colors.blue,
+                              alignment: Alignment.center,
+                              child: Text(index.toString()),
+                            ))
                     ),
                   ),
                   showGlowLeading: false,

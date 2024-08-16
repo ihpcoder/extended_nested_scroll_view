@@ -167,7 +167,7 @@ List<Widget> buildSliverHeader() {
         mainAxisSpacing: 0.0,
       ),
       delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
+            (BuildContext context, int index) {
           return Container(
             alignment: Alignment.center,
             height: 60.0,
@@ -184,7 +184,7 @@ List<Widget> buildSliverHeader() {
   widgets.add(
     SliverList(
       delegate: SliverChildBuilderDelegate(
-        (BuildContext c, int i) {
+            (BuildContext c, int i) {
           return Container(
             alignment: Alignment.center,
             height: 60.0,
@@ -196,14 +196,15 @@ List<Widget> buildSliverHeader() {
     ),
   );
 
-//  widgets.add(SliverPersistentHeader(
-//      pinned: true,
-//      floating: false,
-//      delegate: CommonSliverPersistentHeaderDelegate(
-//          Container(
-//            child: primaryTabBar,
-//            //color: Colors.white,
-//          ),
-//          primaryTabBar.preferredSize.height)));
+  widgets.add(SliverPersistentHeader(
+      pinned: true,
+      floating: false,
+      delegate: CommonSliverPersistentHeaderDelegate(
+          Container(
+            color: Colors.pink,
+            height: 50,
+            //color: Colors.white,
+          ),
+          50)));
   return widgets;
 }
